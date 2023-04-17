@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Sat.Recruitment.Api.Controllers;
-using Sat.Recruitment.Api.Model;
+using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Sat.Recruitment.Test
@@ -17,29 +14,38 @@ namespace Sat.Recruitment.Test
     {
         private readonly ILogger<UserService> _logger;
         private readonly IUserRepository _repo;
-     
-    
+
+
 
         public UserServiceTest()
         {
+            IConfiguration _configuration = new ConfigurationBuilder()
+           .AddInMemoryCollection(new Dictionary<string, string>
+           {
+               ["fileStoragePath"] = "/Files/UsersTest.txt",
+               ["testingFlow"] = "true"
+           })
+           .Build();
+            //  inyection of services for test
+            var services = new ServiceCollection();
 
-        //  inyection of services for test
-        var services = new ServiceCollection();
+            services.AddTransient<IUserRepository, UserRepository>();
 
-       
-        services.AddTransient<IUserRepository, UserRepository>();
+            var serviceProvider = new ServiceCollection()
+            .AddSingleton<IConfiguration>(_configuration)
+            .AddTransient<IUserService, UserService>()
+            .AddTransient<IUserRepository, UserRepository>()
+            .AddLogging()
+            .BuildServiceProvider();
 
-        var serviceProvider = new ServiceCollection()
-        .AddTransient<IUserService, UserService>()
-        .AddTransient<IUserRepository, UserRepository>()
-        .AddLogging()
-        .BuildServiceProvider();
+            var factory = serviceProvider.GetService<ILoggerFactory>();
 
-        var factory = serviceProvider.GetService<ILoggerFactory>();
+            var logger = factory.CreateLogger<UserService>();
+            _logger = logger;
+            _repo = serviceProvider.GetService<IUserRepository>();
 
-        var logger = factory.CreateLogger<UserService>();
-        _logger = logger;
-        _repo = serviceProvider.GetService<IUserRepository>();
+          
+          
 
         }
 
@@ -64,17 +70,35 @@ namespace Sat.Recruitment.Test
         public void userService_CreateUser_fails_on_noEmailFormat()
         {
             var userService = new UserService(_repo, _logger);
+            UserDto newUser = new UserDto
+            {
+                Name = "Pablo",
+                Email = "isNotEmailFormat",
+                Address = "Some Addresss 123",
+                Phone = "3454-2334",
+                UserType = "Normal",
+                Money = "34"
+            };
 
-            var result = userService.CreateUser("Pablo","isNotEmailFormat","Some Addresss 123","3454-2334","Normal","34");
-            Assert.False( result.IsSuccess);
+            var result = userService.CreateUser(newUser);
+            Assert.False(result.IsSuccess);
         }
 
         [Fact]
         public void userService_CreateUser_fails_on_parsingMoney()
         {
             var userService = new UserService(_repo, _logger);
+            UserDto newUser = new UserDto
+            {
+                Name = "Pablo2",
+                Email = "isNotEmailFormat",
+                Address = "Some Addresss 1233",
+                Phone = "3454-2334",
+                UserType = "Normal",
+                Money = "asdf"
+            };
 
-            var result = userService.CreateUser("Pablo", "isNotEmailFormat", "Some Addresss 123", "3454-2334", "Normal", "asdf");
+            var result = userService.CreateUser(newUser);
             Assert.False(result.IsSuccess);
         }
     }

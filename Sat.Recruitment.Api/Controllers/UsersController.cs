@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sat.Recruitment.Api.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sat.Recruitment.Api.Model;
-using Serilog;
 using Microsoft.Extensions.Logging;
+using Sat.Recruitment.Api.Dto;
 
 namespace Sat.Recruitment.Api.Controllers
 {
@@ -26,10 +25,10 @@ namespace Sat.Recruitment.Api.Controllers
 
         [HttpPost]
         [Route("/create-user")]
-        public async Task<IActionResult> CreateUser(string name, string email, string address, string phone, string userType, string money)
+        public async Task<IActionResult> CreateUser(UserDto user)
         {
 
-            var resultModel = await Task.Run(()=> _uServ.CreateUser(name, email, address, phone, userType, money));
+            var resultModel = await Task.Run(()=> _uServ.CreateUser(user));
             if (resultModel.IsSuccess)
             {
                 _logger.LogInformation("Create user success");

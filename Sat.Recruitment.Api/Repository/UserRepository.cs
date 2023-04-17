@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,37 +7,56 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Xml.Linq;
 
 namespace Sat.Recruitment.Api.Repository
 {
-    
+
     public class UserRepository:IUserRepository
     {
         readonly string _path;
         readonly ILogger<UserRepository> _logger;
-        public UserRepository(ILogger<UserRepository> logger)
+        readonly IConfiguration _configuration;
+        public UserRepository(ILogger<UserRepository> logger,IConfiguration conf)
         {
-            _path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
+            
+
+            
             _logger = logger;
+            _configuration = conf;
+            string storageFilePath = GetPat(conf);
+            _path = storageFilePath;
+        }
+
+        private string GetPat(IConfiguration conf)
+        {
+            if (conf.GetValue<string>("testingFlow")=="true")
+            {
+                return Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName) + conf.GetValue<string>("fileStoragePath");
+            }
+            else
+            {
+               return Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
+            }
         }
 
         public List<UserModel> GetUsers()
         {
             List<UserModel> users= new List<UserModel>();
             JArray jarray= new JArray();
-            using StreamReader reader = new StreamReader(_path);
-            var json = reader.ReadToEnd();
-            if (!string.IsNullOrEmpty(json))
+            if (File.Exists(_path))
             {
-                jarray = JArray.Parse(json);
-                _logger.LogInformation("User File is empty");
+                using StreamReader reader = new StreamReader(_path);
+                var json = reader.ReadToEnd();
+                if (!string.IsNullOrEmpty(json))
+                {
+                    jarray = JArray.Parse(json);
+                    _logger.LogInformation("User File is empty");
+                }
+                if (jarray.Count() > 0)
+                    users = JsonConvert.DeserializeObject<List<UserModel>>(json);
             }
-            if (jarray.Count() > 0)
-               users = JsonConvert.DeserializeObject<List<UserModel>>(json);
-
+            else
+            { _logger.LogInformation("User File doesn't exists"); }
             return users;
         }
         public UserResult AddUser(UserModel newUser)

@@ -19,7 +19,7 @@ namespace Sat.Recruitment.Api.Model
         [Required]
         public string UserType { get; set; }
         [Required]
-        public decimal? Money { get; set; }
+        public decimal Money { get; set; }
 
         
     }

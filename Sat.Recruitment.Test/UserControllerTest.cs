@@ -1,42 +1,51 @@
 using System;
-using System.Dynamic;
-
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
-using Moq;
-using Sat.Recruitment.Api;
 using Sat.Recruitment.Api.Controllers;
+using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Model;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
-using Serilog;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Extensions.Ordering;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Sat.Recruitment.Test
 {
+
     [CollectionDefinition("Tests", DisableParallelization = true)]
     public class UserControllerTest
     {
 
         private readonly ILogger<UsersController> _logger;
 
-
         private readonly IUserService _service;
-  
+        private readonly IConfiguration _configuration;
+
 
         public UserControllerTest()
         {
-            //  inyection of services for test
-            var services = new ServiceCollection();
 
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserRepository, UserRepository>();
+
+
+
+            //  inyection of services for test
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    ["fileStoragePath"] = "/Files/UsersTest.txt",
+                    ["testingFlow"] = "true"
+                })
+                .Build();
+            _configuration = configuration;
 
             var serviceProvider = new ServiceCollection()
+            .AddSingleton<IConfiguration>(configuration)
             .AddTransient<IUserService, UserService>()
             .AddTransient<IUserRepository, UserRepository>()
             .AddLogging()
@@ -47,23 +56,32 @@ namespace Sat.Recruitment.Test
             var logger = factory.CreateLogger<UsersController>();
             _logger = logger;
             _service = serviceProvider.GetService<IUserService>();
-            
+
+
+
 
         }
 
 
-
-
-        [Fact]
+        [Fact, Order(1)]
         public void userController_CreateUser_succeed_on_entry()
         {
             //Arrange
-            var userController = new UsersController(_service,_logger);
+            var userController = new UsersController(_service, _logger);
+            UserDto newUser = new UserDto
+            {
+                Name = "Test",
+                Email = "mike@gmail.com",
+                Address = "Av. Juan G",
+                Phone = "+349 1122354215",
+                UserType = "Normal",
+                Money = "124"
+            };
 
             //Act
-            var result = userController.CreateUser("Mike", "mike@gmail.com", "Av. Juan G", "+349 1122354215", "Normal", "124").Result;
+            var result = userController.CreateUser(newUser).Result;
 
-           
+
             var okObjectResult = result as OkObjectResult;
             Assert.NotNull(okObjectResult);
             UserResult userResult = (okObjectResult.Value as UserResult);
@@ -73,15 +91,52 @@ namespace Sat.Recruitment.Test
             Assert.Equal("User Created", userResult.SuccesMsg);
         }
 
+        [Fact, Order(2)]
+        public void userController_CreateUser_fails_on_duplicate_entry()
+        {
+            //Arrange
+            var userController = new UsersController(_service, _logger);
+            UserDto newUser = new UserDto
+            {
+                Name = "Test",
+                Email = "mike@gmail.com",
+                Address = "Av. Juan G",
+                Phone = "+349 1122354215",
+                UserType = "Normal",
+                Money = "124"
+            };
 
-        [Fact]
+            //Act
+            var result = userController.CreateUser(newUser).Result;
+
+
+            var BadReqResult = result as BadRequestObjectResult;
+            Assert.NotNull(BadReqResult);
+            UserResult userResult = (BadReqResult.Value as UserResult);
+
+            //Assert
+            Assert.False(userResult.IsSuccess);
+            Assert.Contains("The user is duplicated", userResult.ErrorDescription);
+        }
+
+
+        [Fact, Order(3)]
         public void userController_CreateUser_Fails_on_wrong_input_entry()
         {
             //Arrange
             var userController = new UsersController(_service, _logger);
+            UserDto newUser = new UserDto
+            {
+                Name = "Agustina",
+                Email = "Agustina@gmail.com",
+                Address = "Av. Juan G",
+                Phone = "+349 1122354215",
+                UserType = "Normal",
+                Money = "ff"
+            };
             //Act
 
-            var result = userController.CreateUser("Agustina", "Agustina@gmail.com", "Av. Juan G", "+349 1122354215", "Normal", "ff").Result;
+            var result = userController.CreateUser(newUser).Result;
             var BadReqResult = result as BadRequestObjectResult;
             Assert.NotNull(BadReqResult);
             UserResult userResult = (BadReqResult.Value as UserResult);
@@ -91,14 +146,23 @@ namespace Sat.Recruitment.Test
             Assert.Contains("The money is empty or incorrect", userResult.ErrorDescription);
 
         }
-        [Fact]
+        [Fact, Order(4)]
         public void userController_CreateUser_Fails_on_nulls_input_entry()
         {
             //Arrange
             var userController = new UsersController(_service, _logger);
+            UserDto newUser = new UserDto
+            {
+                Name = "",
+                Email = "",
+                Address = "Av. Juan G",
+                Phone = "",
+                UserType = "Normal",
+                Money = "ff"
+            };
             //Act
-            var result = userController.CreateUser("", "", "Av. Juan G", "", "Normal", "ff").Result;
-           
+            var result = userController.CreateUser(newUser).Result;
+
             var BadReqResult = result as BadRequestObjectResult;
             Assert.NotNull(BadReqResult);
             UserResult userResult = (BadReqResult.Value as UserResult);
@@ -110,6 +174,27 @@ namespace Sat.Recruitment.Test
             Assert.Contains("The email is empty or incorrect", userResult.ErrorDescription);
 
         }
-   
+
+
+        [Fact, Order(5)]
+        public void RemoveUserTestFile()
+        {
+            // Remove Test Storage file before testing
+            //Assert
+            Assert.True( RemoveTestFile(_configuration));
+
+        }
+        private bool RemoveTestFile(IConfiguration conf)
+        {
+            var file = Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName) + conf.GetValue<string>("fileStoragePath");
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+                return true;
+            }
+            return false;
+           
+
+        }
     }
-}
+    }

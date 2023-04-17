@@ -1,15 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Extensions;
+﻿using Microsoft.Extensions.Logging;
+using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Model;
 using Sat.Recruitment.Api.Repository;
-using Serilog;
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -26,9 +19,10 @@ namespace Sat.Recruitment.Api.Services
         }
 
         //Validate errors
-        public string ValidateUserInputErrors(UserModel userVal)
+        public string ValidateUserInputErrors(UserDto userVal)
         {
             StringBuilder errors = new StringBuilder();
+            decimal moneyParsed;
 
             if (string.IsNullOrEmpty(userVal.Name))
                 errors.Append("The name is required.");
@@ -38,33 +32,24 @@ namespace Sat.Recruitment.Api.Services
                 errors.AppendJoin("|"," The address is required.");
             if (string.IsNullOrEmpty(userVal.Phone))
                 errors.AppendJoin("|"," The phone is required.");
-            if (userVal.Money==null)
+            if (string.IsNullOrEmpty(userVal.Money) || !decimal.TryParse(userVal.Money, out moneyParsed))
                 errors.AppendJoin("|"," The money is empty or incorrect.");
 
 
             return errors.ToString();
         }
-        public UserResult CreateUser(string in_name, string in_email, string in_address, string in_phone,  string in_userType,string in_money)
+        public UserResult CreateUser(UserDto user)
         {
             string errorDescription = string.Empty;
-            decimal moneyParsed;
             decimal gif;
-            decimal percentage = 1;
+            decimal percentage = 1; //default value <no gift>
+
           
 
-            UserModel userInput = new UserModel
-            {
-                Name = in_name,
-                Email = in_email,
-                Address = in_address,
-                Phone = in_phone,
-                Money = decimal.TryParse(in_money, out moneyParsed) ? moneyParsed : (decimal?)null,
-                UserType = in_userType
-
-            };
             try
             {
-                errorDescription = ValidateUserInputErrors(userInput);
+
+                errorDescription = ValidateUserInputErrors(user);
                 if (!string.IsNullOrEmpty(errorDescription))
                 {
                     _logger.LogError("Validations fail: " + errorDescription);
@@ -75,6 +60,7 @@ namespace Sat.Recruitment.Api.Services
 
                     };
                 }
+                UserModel userInput = MapUserDtoToModel(user);
 
                 switch (userInput.UserType)
                 {
@@ -120,6 +106,27 @@ namespace Sat.Recruitment.Api.Services
             }
 
         }
+
+        private UserModel MapUserDtoToModel(UserDto user)
+        {
+      
+            UserModel userInput = new UserModel
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Address = user.Address,
+                Phone = user.Phone,
+                Money = decimal.Parse(user.Money),
+                UserType = user.UserType
+
+            };
+
+           
+
+            return userInput;
+
+        }
+
         public string NormalizeEmail(string newEmail)
         {
 

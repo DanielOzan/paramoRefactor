@@ -1,21 +1,15 @@
-﻿using Castle.Core.Resource;
-using Sat.Recruitment.Api.Dto;
-using Sat.Recruitment.Api.Model;
-using System;
-using System.Collections.Generic;
+﻿using Sat.Recruitment.Api.Dto;
 using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace Sat.Recruitment.Test
 {
-    public  class WebApiHelper
+    public  class TestWebApiHelper
 
     {
         private string url = "";
         HttpClient client = new HttpClient();
-        public WebApiHelper(string url)
+        public TestWebApiHelper(string url)
         {
             this.url = url;
         }

@@ -18,7 +18,7 @@ namespace Sat.Recruitment.Api.Services
             _logger = logger;
         }
 
-        //Validate errors
+        //Validate request errors
         public string ValidateUserInputErrors(UserDto userVal)
         {
             StringBuilder errors = new StringBuilder();
@@ -42,13 +42,10 @@ namespace Sat.Recruitment.Api.Services
         {
             string errorDescription = string.Empty;
             decimal gif;
-            decimal percentage = 1; //default value <no gift>
-
-          
+            decimal percentage = 0; //default value <no gift>
 
             try
             {
-
                 errorDescription = ValidateUserInputErrors(user);
                 if (!string.IsNullOrEmpty(errorDescription))
                 {
@@ -83,7 +80,6 @@ namespace Sat.Recruitment.Api.Services
                             break;
                         }
                     default:
-                        percentage = 1;
                         break;
                 }
                 gif = (decimal)userInput.Money * percentage;
@@ -121,10 +117,7 @@ namespace Sat.Recruitment.Api.Services
 
             };
 
-           
-
             return userInput;
-
         }
 
         public string NormalizeEmail(string newEmail)

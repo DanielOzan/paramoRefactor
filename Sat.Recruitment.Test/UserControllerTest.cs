@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,11 +28,8 @@ namespace Sat.Recruitment.Test
         public UserControllerTest()
         {
 
-
-
-
             //  inyection of services for test
-
+            //Set COnfiguration
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
@@ -43,7 +38,7 @@ namespace Sat.Recruitment.Test
                 })
                 .Build();
             _configuration = configuration;
-
+            //set services dependency and logger
             var serviceProvider = new ServiceCollection()
             .AddSingleton<IConfiguration>(configuration)
             .AddTransient<IUserService, UserService>()
@@ -52,16 +47,11 @@ namespace Sat.Recruitment.Test
             .BuildServiceProvider();
 
             var factory = serviceProvider.GetService<ILoggerFactory>();
-
             var logger = factory.CreateLogger<UsersController>();
             _logger = logger;
             _service = serviceProvider.GetService<IUserService>();
 
-
-
-
         }
-
 
         [Fact, Order(1)]
         public void userController_CreateUser_succeed_on_entry()
@@ -90,7 +80,7 @@ namespace Sat.Recruitment.Test
             Assert.True(userResult.IsSuccess);
             Assert.Equal("User Created", userResult.SuccesMsg);
         }
-
+        //Correlative to the [Fact,Order(1)] userController_CreateUser_succeed_on_entry()
         [Fact, Order(2)]
         public void userController_CreateUser_fails_on_duplicate_entry()
         {
@@ -108,13 +98,12 @@ namespace Sat.Recruitment.Test
 
             //Act
             var result = userController.CreateUser(newUser).Result;
-
-
             var BadReqResult = result as BadRequestObjectResult;
-            Assert.NotNull(BadReqResult);
-            UserResult userResult = (BadReqResult.Value as UserResult);
+
 
             //Assert
+            Assert.NotNull(BadReqResult);
+            UserResult userResult = (BadReqResult.Value as UserResult);
             Assert.False(userResult.IsSuccess);
             Assert.Contains("The user is duplicated", userResult.ErrorDescription);
         }
@@ -138,10 +127,10 @@ namespace Sat.Recruitment.Test
 
             var result = userController.CreateUser(newUser).Result;
             var BadReqResult = result as BadRequestObjectResult;
-            Assert.NotNull(BadReqResult);
-            UserResult userResult = (BadReqResult.Value as UserResult);
 
             //Assert
+            Assert.NotNull(BadReqResult);
+            UserResult userResult = (BadReqResult.Value as UserResult);
             Assert.False(userResult.IsSuccess);
             Assert.Contains("The money is empty or incorrect", userResult.ErrorDescription);
 
@@ -162,7 +151,7 @@ namespace Sat.Recruitment.Test
             };
             //Act
             var result = userController.CreateUser(newUser).Result;
-
+            //Assert
             var BadReqResult = result as BadRequestObjectResult;
             Assert.NotNull(BadReqResult);
             UserResult userResult = (BadReqResult.Value as UserResult);
@@ -179,22 +168,11 @@ namespace Sat.Recruitment.Test
         [Fact, Order(5)]
         public void RemoveUserTestFile()
         {
-            // Remove Test Storage file before testing
-            //Assert
-            Assert.True( RemoveTestFile(_configuration));
+            // Remove Test Storage file after testing
+            //Asserts
+            Assert.True(TestFileHelper.RemoveTestFile(_configuration));
 
         }
-        private bool RemoveTestFile(IConfiguration conf)
-        {
-            var file = Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName) + conf.GetValue<string>("fileStoragePath");
-            if (File.Exists(file))
-            {
-                File.Delete(file);
-                return true;
-            }
-            return false;
-           
 
-        }
     }
-    }
+}

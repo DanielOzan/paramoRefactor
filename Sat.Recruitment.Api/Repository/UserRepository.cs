@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Sat.Recruitment.Api.Repository
 {
@@ -18,25 +19,11 @@ namespace Sat.Recruitment.Api.Repository
         readonly IConfiguration _configuration;
         public UserRepository(ILogger<UserRepository> logger,IConfiguration conf)
         {
-            
 
-            
             _logger = logger;
             _configuration = conf;
-            string storageFilePath = GetPat(conf);
+            string storageFilePath = GetPath(conf);
             _path = storageFilePath;
-        }
-
-        private string GetPat(IConfiguration conf)
-        {
-            if (conf.GetValue<string>("testingFlow")=="true")
-            {
-                return Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName) + conf.GetValue<string>("fileStoragePath");
-            }
-            else
-            {
-               return Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
-            }
         }
 
         public List<UserModel> GetUsers()
@@ -86,7 +73,7 @@ namespace Sat.Recruitment.Api.Repository
             }
         }
 
-        public bool isDuplicate(List<UserModel>usersList, UserModel newEntry)
+        private bool isDuplicate(List<UserModel>usersList, UserModel newEntry)
         {
             var dupFound = usersList.Where(x => (x.Phone == newEntry.Phone || x.Email == newEntry.Email) || (x.Name == newEntry.Name && x.Address == newEntry.Address));
             if (dupFound.Count()>0)
@@ -94,6 +81,27 @@ namespace Sat.Recruitment.Api.Repository
             else
                 return false;
         }
+        //private string GetPath(IConfiguration conf)
+        //{
+
+        //    if (conf.GetValue<string>("testingFlow") == "true")
+        //    {
+
+        //        return Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName) + conf.GetValue<string>("fileStoragePath");
+        //    }
+        //    else
+        //    {
+        //        return Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
+        //    }
+        //}
+        private string GetPath(IConfiguration conf)
+        {
+       
+            {
+                return Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
+            }
+        }
+
 
     }
 }

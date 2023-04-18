@@ -6,8 +6,8 @@ namespace Sat.Recruitment.Api.Services
 {
     public interface IUserService
     {
-         string ValidateUserInputErrors(UserDto userVal);
-         UserResult CreateUser(UserDto user);
+        string ValidateUserInputErrors(UserDto userVal);
+        UserResult CreateUser(UserDto user);
         string NormalizeEmail(string newEmail);
     }
 

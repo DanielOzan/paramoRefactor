@@ -23,7 +23,7 @@ namespace Sat.Recruitment.Test
             };
 
             var url = "http://localhost:5000/create-user";
-            WebApiHelper helper = new WebApiHelper(url);
+            TestWebApiHelper helper = new TestWebApiHelper(url);
             //Act
             var response = helper.Post(newUser);
 
@@ -47,7 +47,7 @@ namespace Sat.Recruitment.Test
             };
 
             var url = "http://localhost:5000/create-user";
-            WebApiHelper helper = new WebApiHelper(url);
+            TestWebApiHelper helper = new TestWebApiHelper(url);
             //Act
             var response = helper.Post(newUser);
 

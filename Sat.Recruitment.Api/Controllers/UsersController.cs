@@ -15,8 +15,6 @@ namespace Sat.Recruitment.Api.Controllers
     {
         private readonly IUserService _uServ;
         private readonly ILogger<UsersController> _logger;
-
-        private readonly List<UserModel> _users = new List<UserModel>();
         public UsersController(IUserService service, ILogger<UsersController> logger)
         {
             _uServ= service;

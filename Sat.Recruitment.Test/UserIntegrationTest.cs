@@ -8,7 +8,7 @@ namespace Sat.Recruitment.Test
 
         //This tests WILL WORK ONLY IF THE MAIN PROYECT IS RUNNING http://localhost:5000/create-user
         //[Fact]
-        public void AddUserSuceedOnHttpClient()
+        public void AddUserSucceedOnHttpClient()
         {
 
             //Arrange

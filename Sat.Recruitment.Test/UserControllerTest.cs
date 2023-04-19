@@ -78,7 +78,7 @@ namespace Sat.Recruitment.Test
 
             //Assert
             Assert.True(userResult.IsSuccess);
-            Assert.Equal("User Created", userResult.SuccesMsg);
+            Assert.Equal("User Created", userResult.SuccessMsg);
         }
         //Correlative to the [Fact,Order(1)] userController_CreateUser_succeed_on_entry()
         [Fact, Order(2)]

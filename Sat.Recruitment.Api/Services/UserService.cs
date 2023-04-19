@@ -22,7 +22,6 @@ namespace Sat.Recruitment.Api.Services
         public string ValidateUserInputErrors(UserDto userVal)
         {
             StringBuilder errors = new StringBuilder();
-            decimal moneyParsed;
 
             if (string.IsNullOrEmpty(userVal.Name))
                 errors.Append("The name is required.");
@@ -32,7 +31,7 @@ namespace Sat.Recruitment.Api.Services
                 errors.AppendJoin("|"," The address is required.");
             if (string.IsNullOrEmpty(userVal.Phone))
                 errors.AppendJoin("|"," The phone is required.");
-            if (string.IsNullOrEmpty(userVal.Money) || !decimal.TryParse(userVal.Money, out moneyParsed))
+            if (string.IsNullOrEmpty(userVal.Money) || !decimal.TryParse(userVal.Money, out decimal _))
                 errors.AppendJoin("|"," The money is empty or incorrect.");
 
 
@@ -49,7 +48,7 @@ namespace Sat.Recruitment.Api.Services
                 errorDescription = ValidateUserInputErrors(user);
                 if (!string.IsNullOrEmpty(errorDescription))
                 {
-                    _logger.LogError("Validations fail: " + errorDescription);
+                    _logger.LogError($"Validations fail: {errorDescription}");
                     return new UserResult
                     {
                         IsSuccess = false,
@@ -85,7 +84,7 @@ namespace Sat.Recruitment.Api.Services
                 gif = (decimal)userInput.Money * percentage;
 
 
-                if (userInput.UserType == "Premium" && userInput.Money > 100)
+                if (string.Compare(userInput.UserType, "Premium", StringComparison.Ordinal) == 0 && userInput.Money > 100)
                     gif = (decimal)userInput.Money * 2;
 
 
@@ -129,8 +128,6 @@ namespace Sat.Recruitment.Api.Services
             {
                 aux[0] = aux[0].Replace(c, string.Empty);
             }
-
-            string firstPart= Regex.Replace(aux[0], "[A-Za-z ]", "");
             return string.Join("@", new string[] { aux[0], aux[1] });
         }
 

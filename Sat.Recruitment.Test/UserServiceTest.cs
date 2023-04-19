@@ -84,7 +84,7 @@ namespace Sat.Recruitment.Test
             Assert.False(result.IsSuccess);
         }
         [Fact, Order(3)]
-        public void userService_CreateUser_Succeed_on_decimalvalueParse()
+        public void userService_CreateUser_Succeed_on_decimalValueParse()
         {
             //Arrange
             var userService = new UserService(_repo, _logger);

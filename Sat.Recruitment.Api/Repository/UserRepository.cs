@@ -64,7 +64,7 @@ namespace Sat.Recruitment.Api.Repository
 
                 System.IO.File.WriteAllText(_path, json);
 
-                return new UserResult { IsSuccess = true, ErrorDescription = null, SuccesMsg = "User Created" };
+                return new UserResult { IsSuccess = true, ErrorDescription = null, SuccessMsg = "User Created" };
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace Sat.Recruitment.Api.Repository
 
         private bool isDuplicate(List<UserModel>usersList, UserModel newEntry)
         {
-            var dupFound = usersList.Where(x => (x.Phone == newEntry.Phone || x.Email == newEntry.Email) || (x.Name == newEntry.Name && x.Address == newEntry.Address));
+            var dupFound = usersList.Where(x => (string.Compare(x.Phone,newEntry.Phone,false)==0 || string.Compare(x.Email, newEntry.Email, StringComparison.Ordinal) == 0) || (string.Compare(x.Name, newEntry.Name, StringComparison.Ordinal) == 0 && string.Compare(x.Address, newEntry.Address, StringComparison.Ordinal) == 0));
             if (dupFound.Count()>0)
              return true;
             else
@@ -98,7 +98,7 @@ namespace Sat.Recruitment.Api.Repository
         {
        
             {
-                return Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
+                return $"{Directory.GetCurrentDirectory()}{conf.GetValue<string>("fileStoragePath")}";
             }
         }
 

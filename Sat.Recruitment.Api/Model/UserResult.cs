@@ -4,8 +4,7 @@
     {
         public string ErrorDescription { get; set; }
         public bool IsSuccess { get; set; }
-        public string SuccesMsg { get; set; }
-
+        public string SuccessMsg { get; set; }
 
     }
 }

@@ -7,7 +7,7 @@ namespace Sat.Recruitment.Test
     public  class TestWebApiHelper
 
     {
-        private string url = "";
+        private string url;
         HttpClient client = new HttpClient();
         public TestWebApiHelper(string url)
         {

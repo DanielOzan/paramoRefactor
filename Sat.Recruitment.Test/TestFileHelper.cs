@@ -10,7 +10,7 @@ namespace Sat.Recruitment.Test
     {
         public static bool RemoveTestFile(IConfiguration conf)
         {
-            var file = Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
+            var file = $"{Directory.GetCurrentDirectory()}{conf.GetValue<string>("fileStoragePath")}";
             if (File.Exists(file))
             {
                 File.Delete(file);

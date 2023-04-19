@@ -7,15 +7,27 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["Sat.Recruitment.Api/Sat.Recruitment.Api.csproj", "Sat.Recruitment.Api/"]
-RUN dotnet restore "Sat.Recruitment.Api/Sat.Recruitment.Api.csproj"
+COPY ["Sat.Recruitment.Test/Sat.Recruitment.Test.csproj", "Sat.Recruitment.Test/"]
+RUN dotnet restore 
+
+
+# copy full solution over
 COPY . .
-WORKDIR "/src/Sat.Recruitment.Api"
-RUN dotnet build "Sat.Recruitment.Api.csproj" -c Release -o /app/build
+RUN dotnet build
 
+# create a new layer from the build later
 FROM build AS publish
-RUN dotnet publish "Sat.Recruitment.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+# set the working directory to be the web api project
+WORKDIR /app/src/Sat.Recruitment.Api
+# publish the web api project to a directory called out
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+# create a new layer using the cut-down aspnet runtime image
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-alpine AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Sat.Recruitment.Api.dll"]
+# copy over the files produced when publishing the service
+COPY --from=publish /app/src/Example.Service/out ./
+# expose port 80 as our application will be listening on this port
+EXPOSE 80
+# run the web api when the docker image is started
+ENTRYPOINT ["dotnet", "Example.Service.dll"]

@@ -1,11 +1,12 @@
 ﻿using Sat.Recruitment.Api.Model;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sat.Recruitment.Api.Repository
 {
     public interface IUserRepository
     {
-         List<UserModel> GetUsers();
-         UserResult AddUser(UserModel newUser);
+          Task<List<UserModel>> GetUsersAsync();
+          Task<UserResult> AddUserAsync(UserModel newUser);
     }
 }

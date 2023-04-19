@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Sat.Recruitment.Api.Model;
 using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Dto;
+using System.Linq;
 
 namespace Sat.Recruitment.Api.Controllers
 {
@@ -23,23 +24,27 @@ namespace Sat.Recruitment.Api.Controllers
 
         [HttpPost]
         [Route("/create-user")]
-        public async Task<IActionResult> CreateUser(UserDto user)
+        public async Task<ActionResult> CreateUser(UserDto user)
         {
 
-            var resultModel = await Task.Run(()=> _uServ.CreateUser(user));
+            var resultModel =  Task.Run(()=> _uServ.CreateUser(user)).Result;
             if (resultModel.IsSuccess)
             {
                 _logger.LogInformation("Create user success");
                 return Ok(resultModel);
-               
             }
             else
             {
                 _logger.LogError("Create user  error");
                 return BadRequest(resultModel);
-               
             }
-
+        }
+        [HttpGet]
+        [Route("/get-users")]
+        public async Task<ActionResult<List<UserDto>>> GetUsers()
+        {
+            var userListTask = Task.Run(() => _uServ.GetUsers());
+                return Ok(userListTask.Result);
         }
 
     }

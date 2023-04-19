@@ -71,12 +71,10 @@ namespace Sat.Recruitment.Test
             //Act
             var result = userController.CreateUser(newUser).Result;
 
-
+            //Assert
             var okObjectResult = result as OkObjectResult;
             Assert.NotNull(okObjectResult);
             UserResult userResult = (okObjectResult.Value as UserResult);
-
-            //Assert
             Assert.True(userResult.IsSuccess);
             Assert.Equal("User Created", userResult.SuccessMsg);
         }
@@ -163,9 +161,22 @@ namespace Sat.Recruitment.Test
             Assert.Contains("The email is empty or incorrect", userResult.ErrorDescription);
 
         }
-
-
         [Fact, Order(5)]
+        public void userController_GetUsers_getSomeSucceed()
+        {
+            // Arrange
+            var userController = new UsersController(_service, _logger);
+            //Act
+            var result = userController.GetUsers().Result;
+            //Assert
+            var okObjectResult = result.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            List<UserDto> userResult = (okObjectResult.Value as List<UserDto>);
+            Assert.True(userResult.Count > 0);
+        }
+
+
+        [Fact, Order(6)]
         public void RemoveUserTestFile()
         {
             // Remove Test Storage file after testing
@@ -173,6 +184,21 @@ namespace Sat.Recruitment.Test
             Assert.True(TestFileHelper.RemoveTestFile(_configuration));
 
         }
+
+        [Fact, Order(7)]
+        public void userController_GetUsers_getZeroSucceed()
+        {
+            // Arrange
+            var userController = new UsersController(_service, _logger);
+            //Act
+            var result = userController.GetUsers().Result;
+            //Assert
+            var okObjectResult = result.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            List<UserDto> userResult = (okObjectResult.Value as List<UserDto>);
+            Assert.True(userResult.Count == 0);
+        }
+
 
     }
 }

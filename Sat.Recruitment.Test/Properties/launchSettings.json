@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Sat.Recruitment.Test": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

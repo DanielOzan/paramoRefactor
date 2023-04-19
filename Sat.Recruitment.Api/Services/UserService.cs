@@ -3,6 +3,8 @@ using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Model;
 using Sat.Recruitment.Api.Repository;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -36,6 +38,10 @@ namespace Sat.Recruitment.Api.Services
 
 
             return errors.ToString();
+        }
+        public List<UserDto> GetUsers()
+        {
+          return  _userRepository.GetUsersAsync().Result.Select(x=> MapUserModelToDto(x)).ToList();
         }
         public UserResult CreateUser(UserDto user)
         {
@@ -92,7 +98,7 @@ namespace Sat.Recruitment.Api.Services
 
                 userInput.Email = NormalizeEmail(userInput.Email);
                 _logger.LogInformation($"Add User successfuly created: Name:{userInput.Name} , Address:{userInput.Address}, UserType:{userInput.UserType} ,  Money:{userInput.Money}, Email:{userInput.Email}, Phone:{userInput.Phone}");
-                return _userRepository.AddUser(userInput);
+                return  _userRepository.AddUserAsync(userInput).Result;
             }
             catch (Exception ex)
             {
@@ -112,6 +118,22 @@ namespace Sat.Recruitment.Api.Services
                 Address = user.Address,
                 Phone = user.Phone,
                 Money = decimal.Parse(user.Money),
+                UserType = user.UserType
+
+            };
+
+            return userInput;
+        }
+        private UserDto MapUserModelToDto(UserModel user)
+        {
+
+            UserDto userInput = new UserDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Address = user.Address,
+                Phone = user.Phone,
+                Money = user.Money.ToString(),
                 UserType = user.UserType
 
             };

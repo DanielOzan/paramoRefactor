@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Sat.Recruitment.Api.Repository
 {
@@ -26,30 +27,32 @@ namespace Sat.Recruitment.Api.Repository
             _path = storageFilePath;
         }
 
-        public List<UserModel> GetUsers()
+        public async Task<List<UserModel>> GetUsersAsync()
         {
             List<UserModel> users= new List<UserModel>();
             JArray jarray= new JArray();
             if (File.Exists(_path))
             {
-                using StreamReader reader = new StreamReader(_path);
-                var json = reader.ReadToEnd();
-                if (!string.IsNullOrEmpty(json))
+                using (var reader = new StreamReader(_path))
                 {
-                    jarray = JArray.Parse(json);
-                    _logger.LogInformation("User File is empty");
+                    var json = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        jarray = JArray.Parse(json);
+                        _logger.LogInformation("User File is empty");
+                    }
+                    if (jarray.Count() > 0)
+                        users = JsonConvert.DeserializeObject<List<UserModel>>(json);
                 }
-                if (jarray.Count() > 0)
-                    users = JsonConvert.DeserializeObject<List<UserModel>>(json);
-            }
+        }
             else
             { _logger.LogInformation("User File doesn't exists"); }
             return users;
         }
-        public UserResult AddUser(UserModel newUser)
+        public async Task<UserResult> AddUserAsync(UserModel newUser)
         {
             
-            List<UserModel> usersList =  GetUsers();
+            List<UserModel> usersList = await GetUsersAsync().ConfigureAwait(false);
             try
             {
                 if (isDuplicate(usersList, newUser))
@@ -62,7 +65,7 @@ namespace Sat.Recruitment.Api.Repository
                 usersList.Add(newUser);
                 string json = JsonConvert.SerializeObject(usersList.ToArray());
 
-                System.IO.File.WriteAllText(_path, json);
+               await  System.IO.File.WriteAllTextAsync(_path, json).ConfigureAwait(false);
 
                 return new UserResult { IsSuccess = true, ErrorDescription = null, SuccessMsg = "User Created" };
             }
@@ -81,27 +84,11 @@ namespace Sat.Recruitment.Api.Repository
             else
                 return false;
         }
-        //private string GetPath(IConfiguration conf)
-        //{
-
-        //    if (conf.GetValue<string>("testingFlow") == "true")
-        //    {
-
-        //        return Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName) + conf.GetValue<string>("fileStoragePath");
-        //    }
-        //    else
-        //    {
-        //        return Directory.GetCurrentDirectory() + conf.GetValue<string>("fileStoragePath");
-        //    }
-        //}
         private string GetPath(IConfiguration conf)
         {
        
-            {
                 return $"{Directory.GetCurrentDirectory()}{conf.GetValue<string>("fileStoragePath")}";
-            }
         }
-
 
     }
 }

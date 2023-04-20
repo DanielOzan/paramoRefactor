@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Sat.Recruitment.Api.Repository;
+using Sat.Recruitment.Api.Services;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Sat.Recruitment.Api
 {
@@ -18,6 +15,16 @@ namespace Sat.Recruitment.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            //Initialize Logger
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
+
+            Log.Information($"Application Starting on {Configuration.GetValue<string>("environment")}");
+            
+
         }
 
         public IConfiguration Configuration { get; }
@@ -25,6 +32,8 @@ namespace Sat.Recruitment.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddControllers();
             services.AddSwaggerGen();
         }
@@ -32,6 +41,7 @@ namespace Sat.Recruitment.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -44,6 +54,7 @@ namespace Sat.Recruitment.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+            app.UseSerilogRequestLogging();
             app.UseRouting();
 
             app.UseAuthorization();

@@ -35,6 +35,8 @@ namespace Sat.Recruitment.Api.Services
                 errors.AppendJoin("|"," The phone is required.");
             if (string.IsNullOrEmpty(userVal.Money) || !decimal.TryParse(userVal.Money, out decimal _))
                 errors.AppendJoin("|"," The money is empty or incorrect.");
+            if (string.IsNullOrEmpty(userVal.Password) || !decimal.TryParse(userVal.Money, out decimal _))
+                errors.AppendJoin("|", " The money is empty or incorrect.");
 
 
             return errors.ToString();
@@ -110,7 +112,7 @@ namespace Sat.Recruitment.Api.Services
 
         private UserModel MapUserDtoToModel(UserDto user)
         {
-      
+
             UserModel userInput = new UserModel
             {
                 Name = user.Name,
@@ -118,7 +120,10 @@ namespace Sat.Recruitment.Api.Services
                 Address = user.Address,
                 Phone = user.Phone,
                 Money = decimal.Parse(user.Money),
-                UserType = user.UserType
+                UserType = user.UserType,
+                Account = user.Email,
+                Password = user.Password
+
 
             };
 
@@ -134,7 +139,10 @@ namespace Sat.Recruitment.Api.Services
                 Address = user.Address,
                 Phone = user.Phone,
                 Money = user.Money.ToString(),
-                UserType = user.UserType
+                UserType = user.UserType,
+                Password= user.Password,
+                Account= user.Account
+                
 
             };
 

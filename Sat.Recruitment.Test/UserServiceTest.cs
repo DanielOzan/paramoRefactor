@@ -76,7 +76,8 @@ namespace Sat.Recruitment.Test
                 Address = "Some Addresss 123",
                 Phone = "3454-2334",
                 UserType = "Normal",
-                Money = "34"
+                Money = "34",
+                Password = "admin123",
             };
             //Act
             var result = userService.CreateUser(newUser);
@@ -95,7 +96,8 @@ namespace Sat.Recruitment.Test
                 Address = "Some Addresss 1233",
                 Phone = "3454-2334",
                 UserType = "Normal",
-                Money = "30.63"
+                Money = "30.63",
+                Password = "admin123",
             };
             //Act
             var result = userService.CreateUser(newUser);
@@ -115,7 +117,8 @@ namespace Sat.Recruitment.Test
                 Address = "Some Addresss 1233",
                 Phone = "3454-2334",
                 UserType = "Normal",
-                Money = "asdf"
+                Money = "asdf",
+                Password = "admin123",
             };
             //Act
             var result = userService.CreateUser(newUser);

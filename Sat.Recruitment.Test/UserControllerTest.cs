@@ -65,7 +65,9 @@ namespace Sat.Recruitment.Test
                 Address = "Av. Juan G",
                 Phone = "+349 1122354215",
                 UserType = "Normal",
-                Money = "124"
+                Money = "124",
+                Password="admin123",
+                
             };
 
             //Act
@@ -91,7 +93,8 @@ namespace Sat.Recruitment.Test
                 Address = "Av. Juan G",
                 Phone = "+349 1122354215",
                 UserType = "Normal",
-                Money = "124"
+                Money = "124",
+                Password = "admin123",
             };
 
             //Act
@@ -119,7 +122,8 @@ namespace Sat.Recruitment.Test
                 Address = "Av. Juan G",
                 Phone = "+349 1122354215",
                 UserType = "Normal",
-                Money = "ff"
+                Money = "ff",
+                Password = "admin123",
             };
             //Act
 
@@ -145,7 +149,8 @@ namespace Sat.Recruitment.Test
                 Address = "Av. Juan G",
                 Phone = "",
                 UserType = "Normal",
-                Money = "ff"
+                Money = "ff",
+                Password = "admin123",
             };
             //Act
             var result = userController.CreateUser(newUser).Result;

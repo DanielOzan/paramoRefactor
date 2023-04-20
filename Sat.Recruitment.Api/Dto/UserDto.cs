@@ -18,6 +18,9 @@ namespace Sat.Recruitment.Api.Dto
             public string UserType { get; set; }
             [Required]
             public string Money { get; set; }
+            public string Account { get; set; }
+            [Required]
+            public string Password { get; set; }
 
     }
 }

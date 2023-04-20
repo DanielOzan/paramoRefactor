@@ -8,20 +8,16 @@ namespace Sat.Recruitment.Api.Model
     [Serializable]
     public class UserModel
     {
-        [Required]
         public string Name { get; set; }
-        [Required]
         public string Email { get; set; }
-        [Required]
         public string Address { get; set; }
-        [Required]
         public string Phone { get; set; }
-        [Required]
         public string UserType { get; set; }
-        [Required]
         public decimal Money { get; set; }
-
-        
+        public string Password { get; internal set; }
+        public string Rol { get; internal set; }
+        public string Account { get; internal set; }
+        public string LastName { get; internal set; }
     }
 
 }

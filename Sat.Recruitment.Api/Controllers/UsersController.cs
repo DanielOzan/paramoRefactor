@@ -6,6 +6,7 @@ using Sat.Recruitment.Api.Model;
 using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Dto;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Sat.Recruitment.Api.Controllers
 {
@@ -23,7 +24,7 @@ namespace Sat.Recruitment.Api.Controllers
         }
 
         [HttpPost]
-        [Route("/create-user")]
+        [Authorize]
         public async Task<ActionResult> CreateUser(UserDto user)
         {
 
@@ -40,7 +41,7 @@ namespace Sat.Recruitment.Api.Controllers
             }
         }
         [HttpGet]
-        [Route("/get-users")]
+        [Authorize]
         public async Task<ActionResult<List<UserDto>>> GetUsers()
         {
             var userListTask = Task.Run(() => _uServ.GetUsers());

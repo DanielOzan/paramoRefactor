@@ -14,10 +14,10 @@ namespace Sat.Recruitment.Api.Model
         public string Phone { get; set; }
         public string UserType { get; set; }
         public decimal Money { get; set; }
-        public string Password { get; internal set; }
-        public string Rol { get; internal set; }
-        public string Account { get; internal set; }
-        public string LastName { get; internal set; }
+        public string Password { get;  set; }
+        public string Rol { get;  set; }
+        public string Account { get;  set; }
+        public string LastName { get;  set; }
     }
 
 }

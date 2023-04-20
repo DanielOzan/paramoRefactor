@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Dto;
@@ -13,17 +14,18 @@ namespace Sat.Recruitment.Api.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IUserService _uServ;
+        
         private readonly ILogger<LoginController> _logger;
-        public LoginController(IUserService service, ILogger<LoginController> logger)
+        private readonly ILoginService _logserv;
+        public LoginController( ILogger<LoginController> logger,ILoginService logserv)
         {
-            _uServ = service;
             _logger = logger;
+            _logserv = logserv;
         }
         [HttpPost]
         public async Task<ActionResult> Login(UserLogin user)
         {
-            var token =LoginService.Authenticate(user);
+            var token = _logserv.Authenticate(user);
             if (!(string.IsNullOrEmpty(token)))
                 return Ok(token);
             else

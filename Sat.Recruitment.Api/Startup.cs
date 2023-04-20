@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Sat.Recruitment.Api.Controllers;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using System;
 using System.Text;
 
 namespace Sat.Recruitment.Api
@@ -84,13 +87,14 @@ namespace Sat.Recruitment.Api
             });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddControllers();
             services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILoginService loginServ)
         {
 
             if (env.IsDevelopment())
@@ -114,6 +118,9 @@ namespace Sat.Recruitment.Api
             {
                 endpoints.MapControllers();
             });
+            //Initialize admin user
+            loginServ.CreateDefaultAdmin();
+
         }
     }
 }

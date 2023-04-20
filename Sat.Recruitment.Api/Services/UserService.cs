@@ -110,7 +110,7 @@ namespace Sat.Recruitment.Api.Services
 
         }
 
-        private UserModel MapUserDtoToModel(UserDto user)
+        public UserModel MapUserDtoToModel(UserDto user)
         {
 
             UserModel userInput = new UserModel
@@ -121,7 +121,7 @@ namespace Sat.Recruitment.Api.Services
                 Phone = user.Phone,
                 Money = decimal.Parse(user.Money),
                 UserType = user.UserType,
-                Account = user.Email,
+                Account = string.IsNullOrEmpty(user.Account) ? user.Email : user.Account,
                 Password = user.Password
 
 
@@ -129,7 +129,7 @@ namespace Sat.Recruitment.Api.Services
 
             return userInput;
         }
-        private UserDto MapUserModelToDto(UserModel user)
+        public UserDto MapUserModelToDto(UserModel user)
         {
 
             UserDto userInput = new UserDto

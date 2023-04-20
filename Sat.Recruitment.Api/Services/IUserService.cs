@@ -11,6 +11,8 @@ namespace Sat.Recruitment.Api.Services
         UserResult CreateUser(UserDto user);
         string NormalizeEmail(string newEmail);
          List<UserDto> GetUsers();
+        UserDto MapUserModelToDto(UserModel user);
+        UserModel MapUserDtoToModel(UserDto user);
     }
 
 }

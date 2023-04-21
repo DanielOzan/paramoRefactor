@@ -39,7 +39,7 @@ namespace Sat.Recruitment.Api.Repository
                     if (!string.IsNullOrEmpty(json))
                     {
                         jarray = JArray.Parse(json);
-                        _logger.LogInformation("User File is empty");
+                        _logger.LogWarning("User File is empty");
                     }
                     if (jarray.Count() > 0)
                         users = JsonConvert.DeserializeObject<List<UserModel>>(json);

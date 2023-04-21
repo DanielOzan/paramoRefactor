@@ -15,7 +15,7 @@ namespace Sat.Recruitment.Api.Model
         public string UserType { get; set; }
         public decimal Money { get; set; }
         public string Password { get;  set; }
-        public string Rol { get;  set; }
+        public string Role { get;  set; }
         public string Account { get;  set; }
         public string LastName { get;  set; }
     }

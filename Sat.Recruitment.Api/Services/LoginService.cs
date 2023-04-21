@@ -15,42 +15,44 @@ using System.Threading;
 
 namespace Sat.Recruitment.Api.Services
 {
-    public  class LoginService:ILoginService
+    public class LoginService : ILoginService
     {
         private readonly IUserService _usrServ;
         private readonly ILogger<LoginService> _log;
         private readonly IConfiguration _conf;
 
-        public LoginService(IUserService usrServ,ILogger<LoginService> log,IConfiguration conf)
+        public LoginService(IUserService usrServ, ILogger<LoginService> log, IConfiguration conf)
         {
             _usrServ = usrServ;
-            _log= log;
+            _log = log;
             _conf = conf;
         }
 
         public void CreateDefaultAdmin()
-            {
+        {
             UserDto newAdminDefault = new UserDto
             {
                 Name = "AdministradorDefault",
                 Email = "admin@default.com",
-                Account= "admin",
+                Account = "admin",
                 Address = "RandomAddress 123",
                 Phone = "333-333",
                 UserType = "Admin",
                 Money = "0",
                 Password = "admin123",
+                Role = "admin"
             };
             //ensure creation
-            var result=_usrServ.CreateUser(newAdminDefault);
-            }
+            var result = _usrServ.CreateUser(newAdminDefault);
+        }
 
-        public  string Authenticate (UserLogin user)
+        public string Authenticate(UserLogin user)
         {
-            
+
             var userResult = _usrServ.GetUsers().FirstOrDefault(x => (x.Account == user.account && x.Password == user.password));
-           
-            if (userResult!=null) {
+
+            if (userResult != null)
+            {
                 UserModel userModelResult = _usrServ.MapUserDtoToModel(userResult);
                 string token = GenerateToken(userModelResult);
                 return token;
@@ -59,7 +61,12 @@ namespace Sat.Recruitment.Api.Services
 
             return string.Empty;
         }
-        private  string GenerateToken(UserModel user)
+
+
+        /// <summary>
+        /// Generates a token for authentication purposes.
+        /// </summary>
+        private string GenerateToken(UserModel user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_conf["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -69,9 +76,10 @@ namespace Sat.Recruitment.Api.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Account),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.GivenName, user.Name)
+                new Claim(ClaimTypes.GivenName, user.Name),
+                new Claim(ClaimTypes.Role, user.Role)
 
-            
+
             };
 
 
@@ -87,6 +95,6 @@ namespace Sat.Recruitment.Api.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-    
+
     }
 }

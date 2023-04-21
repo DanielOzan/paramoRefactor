@@ -35,8 +35,10 @@ namespace Sat.Recruitment.Api.Services
                 errors.AppendJoin("|"," The phone is required.");
             if (string.IsNullOrEmpty(userVal.Money) || !decimal.TryParse(userVal.Money, out decimal _))
                 errors.AppendJoin("|"," The money is empty or incorrect.");
-            if (string.IsNullOrEmpty(userVal.Password) || !decimal.TryParse(userVal.Money, out decimal _))
-                errors.AppendJoin("|", " The money is empty or incorrect.");
+            if (string.IsNullOrEmpty(userVal.Password)) //password input validations
+                errors.AppendJoin("|", " The password is empty or incorrect.");
+            if (string.IsNullOrEmpty(userVal.Role) )
+                errors.AppendJoin("|", " The Role is empty or incorrect.");
 
 
             return errors.ToString();
@@ -99,7 +101,7 @@ namespace Sat.Recruitment.Api.Services
                 userInput.Money = userInput.Money + gif;
 
                 userInput.Email = NormalizeEmail(userInput.Email);
-                _logger.LogInformation($"Add User successfuly created: Name:{userInput.Name} , Address:{userInput.Address}, UserType:{userInput.UserType} ,  Money:{userInput.Money}, Email:{userInput.Email}, Phone:{userInput.Phone}");
+                _logger.LogInformation($"Add User successfuly created: Name:{userInput.Name} , Address:{userInput.Address}, UserType:{userInput.UserType} ,  Role:{userInput.Role}, Email:{userInput.Email}, Phone:{userInput.Phone}");
                 return  _userRepository.AddUserAsync(userInput).Result;
             }
             catch (Exception ex)
@@ -122,7 +124,8 @@ namespace Sat.Recruitment.Api.Services
                 Money = decimal.Parse(user.Money),
                 UserType = user.UserType,
                 Account = string.IsNullOrEmpty(user.Account) ? user.Email : user.Account,
-                Password = user.Password
+                Password = user.Password,
+                Role=user.Role
 
 
             };
@@ -141,7 +144,8 @@ namespace Sat.Recruitment.Api.Services
                 Money = user.Money.ToString(),
                 UserType = user.UserType,
                 Password= user.Password,
-                Account= user.Account
+                Account= user.Account,
+                Role=user.Role
                 
 
             };

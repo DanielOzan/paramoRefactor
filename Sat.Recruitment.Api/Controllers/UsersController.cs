@@ -13,6 +13,7 @@ namespace Sat.Recruitment.Api.Controllers
 
     [ApiController]
     [Route("[controller]")]
+   
     public partial class UsersController : ControllerBase
     {
         private readonly IUserService _uServ;
@@ -24,7 +25,7 @@ namespace Sat.Recruitment.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> CreateUser(UserDto user)
         {
 

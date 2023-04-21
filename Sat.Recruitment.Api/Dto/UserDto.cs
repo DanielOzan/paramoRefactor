@@ -21,6 +21,8 @@ namespace Sat.Recruitment.Api.Dto
             public string Account { get; set; }
             [Required]
             public string Password { get; set; }
+            [Required]
+            public string Role { get; set; }
 
     }
 }

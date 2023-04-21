@@ -67,6 +67,7 @@ namespace Sat.Recruitment.Test
                 UserType = "Normal",
                 Money = "124",
                 Password="admin123",
+                Role="Default"
                 
             };
 
@@ -95,6 +96,7 @@ namespace Sat.Recruitment.Test
                 UserType = "Normal",
                 Money = "124",
                 Password = "admin123",
+                Role = "Default"
             };
 
             //Act
@@ -124,6 +126,7 @@ namespace Sat.Recruitment.Test
                 UserType = "Normal",
                 Money = "ff",
                 Password = "admin123",
+                Role = "Default"
             };
             //Act
 
@@ -151,6 +154,7 @@ namespace Sat.Recruitment.Test
                 UserType = "Normal",
                 Money = "ff",
                 Password = "admin123",
+                Role = "Default"
             };
             //Act
             var result = userController.CreateUser(newUser).Result;

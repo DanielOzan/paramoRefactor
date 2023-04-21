@@ -46,7 +46,7 @@ namespace Sat.Recruitment.Api.Repository
                 }
         }
             else
-            { _logger.LogInformation("User File doesn't exists"); }
+            { _logger.LogWarning("User File doesn't exists, it will be created"); }
             return users;
         }
         public async Task<UserResult> AddUserAsync(UserModel newUser)

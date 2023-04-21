@@ -43,13 +43,13 @@ namespace Sat.Recruitment.Api.Services
                 Role = "admin"
             };
             //ensure creation
-            var result = _usrServ.CreateUser(newAdminDefault);
+            _usrServ.CreateUser(newAdminDefault);
         }
 
         public string Authenticate(UserLogin user)
         {
 
-            var userResult = _usrServ.GetUsers().FirstOrDefault(x => (x.Account == user.account && x.Password == user.password));
+            var userResult = _usrServ.GetUsers().FirstOrDefault(x => (string.Compare(x.Account, user.account, StringComparison.Ordinal) == 0 && string.Compare(x.Password, user.password, StringComparison.Ordinal) == 0));
 
             if (userResult != null)
             {

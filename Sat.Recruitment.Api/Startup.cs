@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sat.Recruitment.Api.Controllers;
+using Sat.Recruitment.Api.Data;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
 using Serilog;
@@ -19,7 +21,7 @@ namespace Sat.Recruitment.Api
 {
     public class Startup
     {
-        public static IConfiguration Configuration { get; set; }
+        public static IConfiguration Configuration { get; set; } //static , to be acceded from anywhere, avoiding innecessary  dependency inyection
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,7 +32,7 @@ namespace Sat.Recruitment.Api
                 .WriteTo.Console(theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
-            Log.Information($"Application Starting on {Configuration.GetValue<string>("environment")}");
+            Log.Information($"Application Starting on {Configuration.GetValue<string>("env")}");
 
 
         }
@@ -85,10 +87,12 @@ namespace Sat.Recruitment.Api
                     }
                 });
             });
+            services.AddDbContext<SatDbContext>(options =>
+            options.UseSqlite(Configuration["ConnectionStrings:sqlite"]));
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILoginService, LoginService>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRepository, UserRepository_SqLite>();
             services.AddControllers();
             services.AddSwaggerGen();
         }

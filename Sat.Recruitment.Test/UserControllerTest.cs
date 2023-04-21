@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Controllers;
+using Sat.Recruitment.Api.Data;
 using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Model;
 using Sat.Recruitment.Api.Repository;
@@ -24,6 +25,7 @@ namespace Sat.Recruitment.Test
 
         private readonly IUserService _service;
         private readonly IConfiguration _configuration;
+        private readonly SatDbContext _context;
 
 
         public UserControllerTest()
@@ -37,6 +39,11 @@ namespace Sat.Recruitment.Test
             _service = serviceProvider.GetService<IUserService>();
             _configuration = serviceProvider.GetService<IConfiguration>();
             _logger.LogInformation("Test User Service initializing...");
+            _context = serviceProvider.GetService<SatDbContext>();
+
+            _logger.LogInformation("Test User Controller initializing...");
+
+
         }
 
         [Fact, Order(1)]
@@ -172,11 +179,11 @@ namespace Sat.Recruitment.Test
 
 
         [Fact, Order(6)]
-        public void RemoveUserTestFile()
+        public void Remove_all_Users_fromTestDb_succed() //JOB 
         {
             // Remove Test Storage file after testing
             //Asserts
-            Assert.True(TestFileHelper.RemoveTestFile(_configuration));
+            Assert.True(TestHelper.removeDbTestData(_context));
 
         }
 

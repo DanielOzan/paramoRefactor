@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Sat.Recruitment.Api.Data;
 using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
@@ -17,6 +18,7 @@ namespace Sat.Recruitment.Test
         private readonly ILogger<UserService> _logger;
         private readonly IUserRepository _repo;
         private readonly IConfiguration _configuration;
+        private readonly SatDbContext _context;
 
         public UserServiceTest()
         {
@@ -30,7 +32,7 @@ namespace Sat.Recruitment.Test
             _logger = logger;
             _repo = serviceProvider.GetService<IUserRepository>();
             _configuration= serviceProvider.GetService<IConfiguration>();
-
+            _context = serviceProvider.GetService<SatDbContext>();
             _logger.LogInformation("Test User Service initializing...");
 
         }
@@ -117,12 +119,14 @@ namespace Sat.Recruitment.Test
             //Assert
             Assert.False(result.IsSuccess);
         }
-        [Fact, Order(5)]
-        public void RemoveUserTestFile()
+
+        [Fact, Order(6)]
+        public void Remove_all_Users_fromTestDb_succed() //JOB 
         {
             // Remove Test Storage file after testing
-            //Assert
-            Assert.True(TestFileHelper.RemoveTestFile(_configuration));
+            //Asserts
+            Assert.True(TestHelper.removeDbTestData(_context));
+
         }
     }
 }

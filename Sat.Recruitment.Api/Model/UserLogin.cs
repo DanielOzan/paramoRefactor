@@ -1,5 +1,8 @@
-﻿namespace Sat.Recruitment.Api.Model
+﻿using System;
+
+namespace Sat.Recruitment.Api.Model
 {
+    [Serializable]
     public class UserLogin
     {
 

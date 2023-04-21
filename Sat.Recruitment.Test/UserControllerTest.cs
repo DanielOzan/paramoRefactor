@@ -8,6 +8,7 @@ using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Model;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
+using Sat.Recruitment.Test.Helper;
 using Xunit;
 using Xunit.Extensions.Ordering;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
@@ -28,29 +29,14 @@ namespace Sat.Recruitment.Test
         public UserControllerTest()
         {
 
-            //  inyection of services for test
-            //Set COnfiguration
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-                    ["fileStoragePath"] = "/Files/UsersTest.txt",
-                    ["testingFlow"] = "true"
-                })
-                .Build();
-            _configuration = configuration;
-            //set services dependency and logger
-            var serviceProvider = new ServiceCollection()
-            .AddSingleton<IConfiguration>(configuration)
-            .AddTransient<IUserService, UserService>()
-            .AddTransient<IUserRepository, UserRepository>()
-            .AddLogging()
-            .BuildServiceProvider();
+         var serviceProvider= TestHelper.GetTestDependencyServices();
 
             var factory = serviceProvider.GetService<ILoggerFactory>();
             var logger = factory.CreateLogger<UsersController>();
             _logger = logger;
             _service = serviceProvider.GetService<IUserService>();
-
+            _configuration = serviceProvider.GetService<IConfiguration>();
+            _logger.LogInformation("Test User Service initializing...");
         }
 
         [Fact, Order(1)]

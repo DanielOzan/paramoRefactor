@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Dto;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Services;
+using Sat.Recruitment.Test.Helper;
 using System.Collections.Generic;
 using Xunit;
 using Xunit.Extensions.Ordering;
@@ -19,30 +20,18 @@ namespace Sat.Recruitment.Test
 
         public UserServiceTest()
         {
-            IConfiguration configuration = new ConfigurationBuilder()
-           .AddInMemoryCollection(new Dictionary<string, string>
-           {
-               ["fileStoragePath"] = "/Files/UsersTest.txt",
-               ["testingFlow"] = "true"
-           })
-           .Build();
-            //  inyection of services for test
-            var services = new ServiceCollection();
 
-            services.AddTransient<IUserRepository, UserRepository>();
-            _configuration = configuration;
-            var serviceProvider = new ServiceCollection()
-            .AddSingleton<IConfiguration>(_configuration)
-            .AddTransient<IUserService, UserService>()
-            .AddTransient<IUserRepository, UserRepository>()
-            .AddLogging()
-            .BuildServiceProvider();
+            //  inyection of services for test
+            var serviceProvider = TestHelper.GetTestDependencyServices();
 
             var factory = serviceProvider.GetService<ILoggerFactory>();
 
             var logger = factory.CreateLogger<UserService>();
             _logger = logger;
             _repo = serviceProvider.GetService<IUserRepository>();
+            _configuration= serviceProvider.GetService<IConfiguration>();
+
+            _logger.LogInformation("Test User Service initializing...");
 
         }
 

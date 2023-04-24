@@ -49,7 +49,7 @@ namespace Sat.Recruitment.Api.Services
         public string Authenticate(UserLogin user)
         {
 
-            var userResult = _usrServ.GetUsers().FirstOrDefault(x => (string.Compare(x.Account, user.account, StringComparison.Ordinal) == 0 && string.Compare(x.Password, user.password, StringComparison.Ordinal) == 0));
+            var userResult = _usrServ.GetUsers().Result.FirstOrDefault(x => (string.Compare(x.Account, user.account, StringComparison.Ordinal) == 0 && string.Compare(x.Password, user.password, StringComparison.Ordinal) == 0));
 
             if (userResult != null)
             {

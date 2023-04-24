@@ -4,6 +4,7 @@ using Sat.Recruitment.Api.Model;
 using Sat.Recruitment.Api.Repository;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -46,9 +47,10 @@ namespace Sat.Recruitment.Api.Services
 
             return errors.ToString();
         }
-        public  List<UserDto> GetUsers()
+        public  async Task<List<UserDto>> GetUsers()
         {
-          return  _userRepository.GetUsersAsync().Result.Select(x=> MapUserModelToDto(x)).ToList();
+          return await   _userRepository.GetUsersAsync().Result.Select(x=> MapUserModelToDto(x)).AsQueryable().ToListAsync();
+
         }
         public async Task<UserDto> GetUser(string account)
         {

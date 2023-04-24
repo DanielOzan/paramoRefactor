@@ -14,7 +14,7 @@ namespace Sat.Recruitment.Api.Services
         string ValidateUserInputErrors(UserDto userVal);
         Task<UserResult> CreateUser(UserDto user);
         string NormalizeEmail(string newEmail);
-         List<UserDto> GetUsers();
+         Task<List<UserDto>> GetUsers();
         UserDto MapUserModelToDto(UserModel user);
         UserModel MapUserDtoToModel(UserDto user);
     }

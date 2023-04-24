@@ -62,6 +62,7 @@ namespace Sat.Recruitment.Test
             var userService = new UserService(_repo, _logger);
             UserDto newUser = new UserDto
             {
+                Account="pab",
                 Name = "Pablo",
                 Email = "isNotEmailFormat",
                 Address = "Some Addresss 123",
@@ -72,7 +73,7 @@ namespace Sat.Recruitment.Test
                 Role = "Default"
             };
             //Act
-            var result = userService.CreateUser(newUser);
+            var result = userService.CreateUser(newUser).Result;
             //Assert
             Assert.False(result.IsSuccess);
         }
@@ -83,6 +84,7 @@ namespace Sat.Recruitment.Test
             var userService = new UserService(_repo, _logger);
             UserDto newUser = new UserDto
             {
+                Account="pab3",
                 Name = "Pablo",
                 Email = "pabloEmail@yahoo.com",
                 Address = "Some Addresss 1233",
@@ -93,7 +95,7 @@ namespace Sat.Recruitment.Test
                 Role = "Default"
             };
             //Act
-            var result = userService.CreateUser(newUser);
+            var result = userService.CreateUser(newUser).Result;
             //Assert
             Assert.True(result.IsSuccess);
         }
@@ -105,6 +107,7 @@ namespace Sat.Recruitment.Test
             var userService = new UserService(_repo, _logger);
             UserDto newUser = new UserDto
             {
+                Account = "pab33",
                 Name = "Pablo2",
                 Email = "isNotEmailFormat",
                 Address = "Some Addresss 1233",
@@ -115,7 +118,7 @@ namespace Sat.Recruitment.Test
                 Role = "Default"
             };
             //Act
-            var result = userService.CreateUser(newUser);
+            var result = userService.CreateUser(newUser).Result;
             //Assert
             Assert.False(result.IsSuccess);
         }

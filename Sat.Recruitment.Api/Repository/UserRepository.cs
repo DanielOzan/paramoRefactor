@@ -2,9 +2,12 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Sat.Recruitment.Api.Data;
 using Sat.Recruitment.Api.Model;
+using SQLitePCL;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -25,6 +28,7 @@ namespace Sat.Recruitment.Api.Repository
             _configuration = conf;
             string storageFilePath = GetPath(conf);
             _path = storageFilePath;
+
         }
 
         public async Task<List<UserModel>> GetUsersAsync()
@@ -90,5 +94,20 @@ namespace Sat.Recruitment.Api.Repository
                 return $"{Directory.GetCurrentDirectory()}{conf.GetValue<string>("fileStoragePath")}";
         }
 
+
+        Task<UserModel> IUserRepository.GetUserAsyncByAccount(string account)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<UserResult> IUserRepository.RemoveUser(string account)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserResult> EditUserAsync(UserModel editUser, string account)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

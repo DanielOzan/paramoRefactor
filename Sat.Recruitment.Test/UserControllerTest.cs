@@ -53,6 +53,7 @@ namespace Sat.Recruitment.Test
             var userController = new UsersController(_service, _logger);
             UserDto newUser = new UserDto
             {
+                Account="test",
                 Name = "Test",
                 Email = "mike@gmail.com",
                 Address = "Av. Juan G",
@@ -82,6 +83,7 @@ namespace Sat.Recruitment.Test
             var userController = new UsersController(_service, _logger);
             UserDto newUser = new UserDto
             {
+                Account = "test2",
                 Name = "Test",
                 Email = "mike@gmail.com",
                 Address = "Av. Juan G",
@@ -112,6 +114,7 @@ namespace Sat.Recruitment.Test
             var userController = new UsersController(_service, _logger);
             UserDto newUser = new UserDto
             {
+                Account = "test3",
                 Name = "Agustina",
                 Email = "Agustina@gmail.com",
                 Address = "Av. Juan G",
@@ -140,6 +143,7 @@ namespace Sat.Recruitment.Test
             var userController = new UsersController(_service, _logger);
             UserDto newUser = new UserDto
             {
+                Account = "test4",
                 Name = "",
                 Email = "",
                 Address = "Av. Juan G",
@@ -176,9 +180,72 @@ namespace Sat.Recruitment.Test
             List<UserDto> userResult = (okObjectResult.Value as List<UserDto>);
             Assert.True(userResult.Count > 0);
         }
-
-
         [Fact, Order(6)]
+        public void userController_Getuser_succeed()
+        {
+            //Arrange
+            var userController = new UsersController(_service, _logger);
+            string account = "test";
+
+            //Act
+            var result =  userController.GetUser(account).Result;
+
+            //Assert
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            UserDto userResult = (okObjectResult.Value as UserDto);
+            Assert.True(userResult.Account=="test");
+
+        }
+        [Fact, Order(7)]
+        public void userController_EditUser_succeed()
+        {
+            //Arrange
+            var userController = new UsersController(_service, _logger);
+            string account = "test";
+            UserDto editedUser = new UserDto
+            {
+                Account = "test3", //edited
+                Name = "Test Edited", //edited
+                Email = "mikeTest@gmail.com", //edited
+                Address = "Av. Juan G",
+                Phone = "+349 1122354215",
+                UserType = "Normal",
+                Money = "124",
+                Password = "admin123",
+                Role = "Default"
+
+            };
+
+            //Act
+            var result = userController.EditUser(editedUser, account).Result;
+
+            //Assert
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            UserResult userResult = (okObjectResult.Value as UserResult);
+            Assert.True(userResult.IsSuccess);
+        }
+        [Fact, Order(8)]
+        public void userController_Removeuser_succeed()
+        {
+            //Arrange
+            var userController = new UsersController(_service, _logger);
+            string account = "test3";
+
+            //Act
+            var result = userController.Remove(account).Result;
+
+            //Assert
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            UserResult userResult = (okObjectResult.Value as UserResult);
+            Assert.True(userResult.IsSuccess);
+        }
+    
+
+
+        [Fact, Order(60)]
         public void Remove_all_Users_fromTestDb_succed() //JOB 
         {
             // Remove Test Storage file after testing
@@ -187,7 +254,7 @@ namespace Sat.Recruitment.Test
 
         }
 
-        [Fact, Order(7)]
+        [Fact, Order(70)]
         public void userController_GetUsers_getZeroSucceed()
         {
             // Arrange
@@ -200,6 +267,7 @@ namespace Sat.Recruitment.Test
             List<UserDto> userResult = (okObjectResult.Value as List<UserDto>);
             Assert.True(userResult.Count == 0);
         }
+  
 
 
     }

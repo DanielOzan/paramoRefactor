@@ -29,7 +29,7 @@ namespace Sat.Recruitment.Api.Controllers
         public async Task<ActionResult> CreateUser(UserDto user)
         {
 
-            var resultModel =  Task.Run(()=> _uServ.CreateUser(user)).Result;
+            var resultModel =  await Task.Run(()=> _uServ.CreateUser(user));
             if (resultModel.IsSuccess)
             {
                 _logger.LogInformation("Create user success");
@@ -41,14 +41,62 @@ namespace Sat.Recruitment.Api.Controllers
                 return BadRequest(resultModel);
             }
         }
+        [HttpPost]
+        [Route("Remove/{account}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> Remove(string account)
+        {
+
+            var resultModel = await Task.Run(() => _uServ.RemoveUser(account));
+            if (resultModel!=null)
+            {
+                _logger.LogInformation("Remove user success");
+                return Ok(resultModel);
+            }
+            else
+            {
+                _logger.LogError("Remove user  error");
+                return NotFound(resultModel);
+            }
+        }
+        [HttpPost]
+        [Route("Edit")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> EditUser(UserDto user,string account)
+        {
+            var resultModel =await Task.Run(() => _uServ.EditUser(user,account));
+            if (resultModel!=null && (resultModel.IsSuccess))
+            {
+                _logger.LogInformation("Edit user success");
+                return Ok(resultModel);
+            }
+            else
+            {
+                _logger.LogError("Edit user  error");
+                return NotFound(resultModel);
+            }
+        }
         [HttpGet]
-        [Authorize]
+        [Route("/GetUser/{account}")]
+        public async Task<ActionResult> GetUser(string account)
+        {
+
+            var resultModel =await Task.Run(() => _uServ.GetUser(account));
+            if (resultModel!=null)
+            {
+                return Ok(resultModel);
+            }
+            else
+            {
+                return NotFound(resultModel);
+            }
+        }
+        [HttpGet]
+        [Route("/GetUsers")]
         public async Task<ActionResult<List<UserDto>>> GetUsers()
         {
-            var userListTask = Task.Run(() => _uServ.GetUsers());
-                return Ok(userListTask.Result);
+            var userListTask = await Task.Run(() => _uServ.GetUsers());
+                return Ok(userListTask);
         }
-
     }
-
 }
